@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import db from "../../../db/src";
 import { createClient } from "redis";
-
+require("dotenv").config();
 const redisClient = createClient();
 
 const app = express();
@@ -11,7 +11,10 @@ app.use(express.json());
 app.get("/submission/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const submission = await db.submission.findFirst({ where: { id } });
+    const submission = await db.submission.findFirst({
+      where: { id },
+      include: { testCases: true },
+    });
     res.json(submission);
   } catch (error) {
     console.error("Error fetching submissions:", error);
@@ -22,13 +25,16 @@ app.get("/submission/:id", async (req: Request, res: Response) => {
 // POST /submission
 app.post("/submission", async (req: Request, res: Response) => {
   try {
-    const { submission, testCases } = req.body;
+    const { submission } = req.body;
     const createdSubmission = await db.submission.create({
       data: {
         ...submission,
         testCases: {
-          create: testCases,
+          create: submission.testCases,
         },
+      },
+      include: {
+        testCases: true,
       },
     });
     redisClient.LPUSH("submission_ids", createdSubmission.id.toString());
@@ -62,5 +68,6 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   await redisClient.connect();
+  redisClient.set("API_URL", process.env.API_URL || "");
   console.log(`Server is running on port ${PORT}`);
 });

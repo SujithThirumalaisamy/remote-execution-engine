@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: submission_id
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: submission_id
+  template:
+    metadata:
+      labels:
+        app: submission_id
+    spec:
+      containers:
+      - name: submission_id
+        image: sujiththirumalaisamy/exec-py:latest
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "256Mi"
+          requests:
+            cpu: "0.25"  # Resource requests
+            memory: "128Mi"
+        env:
+          - name: CALLBACK_URL
+            value: callback_url
+          - name: SUBMISSION_ID
+            value: submission_id

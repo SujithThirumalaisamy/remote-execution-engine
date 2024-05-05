@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { createClient } from "redis";
-import db from "@repo/db/client";
+import db from "../../db/src";
 
 const redisClient = createClient();
 redisClient.connect();
@@ -12,10 +12,18 @@ app.post("/submission", async (req: Request, res: Response) => {
   try {
     const { code, languageId, testCases, stdIn } = req.body;
     const newSubmission = await db.executionCode.create({
-      data: { code, languageId, stdIn, executionTestCase: { create: testCases } },
+      data: {
+        code,
+        languageId,
+        stdIn,
+        executionTestCase: { create: testCases },
+      },
     });
     redisClient.LPUSH("submission_ids", newSubmission.id);
-    res.status(200).json({ message: "Submission created succesfully!", SubmissionID: newSubmission.id });
+    res.status(200).json({
+      message: "Submission created succesfully!",
+      SubmissionID: newSubmission.id,
+    });
   } catch (error) {
     console.error("Error creating submission:", error);
     res.status(500).json({ error: "Internal Server Error" });
