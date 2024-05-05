@@ -5,6 +5,9 @@ CREATE TYPE "SubmissionStatus" AS ENUM ('Queued', 'Successful', 'Error');
 CREATE TABLE "CodeLanguage" (
     "id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
+    "compileCommand" TEXT NOT NULL DEFAULT '',
+    "executionCommand" TEXT NOT NULL DEFAULT '',
+    "testCommand" TEXT NOT NULL DEFAULT '',
 
     CONSTRAINT "CodeLanguage_pkey" PRIMARY KEY ("id")
 );
@@ -14,13 +17,13 @@ CREATE TABLE "Submission" (
     "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "mainFuncName" TEXT NOT NULL DEFAULT 'main',
-    "stdin" TEXT,
-    "stdout" TEXT,
+    "stdin" TEXT NOT NULL DEFAULT '',
+    "stdout" TEXT NOT NULL DEFAULT '',
     "codeLanguageId" INTEGER NOT NULL,
     "executionContainerId" TEXT NOT NULL DEFAULT '',
-    "status" "SubmissionStatus" NOT NULL,
-    "runtime" INTEGER NOT NULL,
-    "memoryUsage" INTEGER NOT NULL,
+    "status" "SubmissionStatus" NOT NULL DEFAULT 'Queued',
+    "runtime" DOUBLE PRECISION,
+    "memoryUsage" DOUBLE PRECISION,
     "errorMessage" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
