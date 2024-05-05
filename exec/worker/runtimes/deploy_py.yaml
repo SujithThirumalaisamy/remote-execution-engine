@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: submission_id
+  name: e441e7bc-0d38-445a-9100-3fb51806af0c
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: submission_id
+      app: e441e7bc-0d38-445a-9100-3fb51806af0c
   template:
     metadata:
       labels:
-        app: submission_id
+        app: e441e7bc-0d38-445a-9100-3fb51806af0c
     spec:
       containers:
-      - name: submission_id
-        image: sujiththirumalaisamy/exec-py:latest
-        resources:
-          limits:
-            cpu: "0.5"
-            memory: "256Mi"
-          requests:
-            cpu: "0.25"  # Resource requests
-            memory: "128Mi"
-        env:
-          - name: CALLBACK_URL
-            value: callback_url
-          - name: SUBMISSION_ID
-            value: submission_id
+        - name: e441e7bc-0d38-445a-9100-3fb51806af0c
+          image: sujiththirumalaisamy/exec-py:latest
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "256Mi"
+            requests:
+              cpu: "0.25" # Resource requests
+              memory: "128Mi"
+          env:
+            - name: CALLBACK_URL
+              value: http://192.168.1.100:3000
+            - name: SUBMISSION_ID
+              value: e441e7bc-0d38-445a-9100-3fb51806af0c

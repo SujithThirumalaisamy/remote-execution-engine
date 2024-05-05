@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kubernetes/client-node": "^0.21.0"
+    "@kubernetes/client-node": "^0.21.0",
+    "@types/redis": "^4.0.11",
+    "redis": "^4.6.13"
   }
 }
