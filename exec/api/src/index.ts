@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
-import db from "@repo/db/src";
-import Redis from "redis";
+import db from "../../../db/src";
+import { createClient } from "redis";
 
-const redisClient = Redis.createClient();
+const redisClient = createClient();
 
 const app = express();
 app.use(express.json());
@@ -22,10 +22,13 @@ app.get("/submission/:id", async (req: Request, res: Response) => {
 // POST /submission
 app.post("/submission", async (req: Request, res: Response) => {
   try {
-    const { submission } = req.body;
+    const { submission, testCases } = req.body;
     const createdSubmission = await db.submission.create({
       data: {
         ...submission,
+        testCases: {
+          create: testCases,
+        },
       },
     });
     redisClient.LPUSH("submission_ids", createdSubmission.id.toString());
@@ -57,6 +60,7 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await redisClient.connect();
   console.log(`Server is running on port ${PORT}`);
 });

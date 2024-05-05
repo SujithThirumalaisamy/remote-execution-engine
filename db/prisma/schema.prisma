@@ -14,9 +14,12 @@ datasource db {
 }
 
 model CodeLanguage {
-  id         Int          @id
-  name       String
-  Submission Submission[]
+  id               Int          @id
+  name             String
+  Submission       Submission[]
+  compileCommand   String       @default("")
+  executionCommand String       @default("")
+  testCommand      String       @default("")
 }
 
 enum SubmissionStatus {
@@ -29,14 +32,14 @@ model Submission {
   id                   String           @id @default(uuid())
   code                 String
   mainFuncName         String           @default("main")
-  stdin                String?
-  stdout               String?
+  stdin                String           @default("")
+  stdout               String           @default("")
   codeLanguageId       Int
   codeLanguage         CodeLanguage     @relation(fields: [codeLanguageId], references: [id])
   executionContainerId String           @default("")
-  status               SubmissionStatus
-  runtime              Int
-  memoryUsage          Int
+  status               SubmissionStatus @default(Queued)
+  runtime              Float?
+  memoryUsage          Float?
   errorMessage         String?
   createdAt            DateTime         @default(now())
   testCases            TestCase[]
