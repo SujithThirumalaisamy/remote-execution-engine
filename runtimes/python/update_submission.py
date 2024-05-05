@@ -14,7 +14,8 @@ def submit_patch_request(api_url, testcases_file, stdout_file):
     print(stdout_content)
     payload = {
         'testCasesPassed': testcases_content,
-        'stdOut': stdout_content
+        'stdOut': stdout_content,
+        'status': "Successful"
     }
 
     # Submit PATCH request
@@ -29,10 +30,10 @@ def submit_patch_request(api_url, testcases_file, stdout_file):
 
 if __name__ == "__main__":
     # Get API URL from environment variable
-    api_url = os.getenv("API_URL")+"/submission/"+os.getenv("SUBMISSION_ID")
+    api_url = os.getenv("CALLBACK_URL")+"/submission/"+os.getenv("SUBMISSION_ID")
 
     if not api_url:
-        print("API_URL environment variable is not set.")
+        print("CALLBACK_URL environment variable is not set.")
         exit(1)
 
     # Paths to testcases.txt and stdout.txt in the current directory
