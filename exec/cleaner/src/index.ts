@@ -8,7 +8,7 @@ const redis = createClient();
 
 function delete_deployment(deploymentName: string) {
   k8sApi
-    .deleteNamespacedDeployment(deploymentName, "default")
+    .deleteNamespacedDeployment(deploymentName, "isolated-execution-env")
     .then(() => {
       console.log(`Deployment ${deploymentName} deleted successfully`);
     })
@@ -21,7 +21,6 @@ async function main() {
   setInterval(async () => {
     const deploymentName: string =
       (await redis.RPOP("deployments_to_be_deleted")) || "";
-    console.log(deploymentName.length);
     if (deploymentName.length === 0) {
       //How to make this wait for few seconds if there is no Deployments
     } else {

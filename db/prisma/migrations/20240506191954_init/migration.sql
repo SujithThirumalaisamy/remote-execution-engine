@@ -17,7 +17,7 @@ CREATE TABLE "Submission" (
     "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "mainFuncName" TEXT NOT NULL DEFAULT 'main',
-    "stdin" TEXT NOT NULL DEFAULT '',
+    "stdin" TEXT[] DEFAULT ARRAY['']::TEXT[],
     "stdout" TEXT NOT NULL DEFAULT '',
     "codeLanguageId" INTEGER NOT NULL,
     "executionContainerId" TEXT NOT NULL DEFAULT '',

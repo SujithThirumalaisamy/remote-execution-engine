@@ -15,6 +15,14 @@ app.get("/submission/:id", async (req: Request, res: Response) => {
       where: { id },
       include: { testCases: true },
     });
+    if (submission?.testCases.length === 0) {
+      const { testCases, ...rest } = submission;
+      return res.json(rest);
+    }
+    if (submission?.stdin[0] == "") {
+      const { stdin, ...rest } = submission;
+      return res.json(rest);
+    }
     res.json(submission);
   } catch (error) {
     console.error("Error fetching submissions:", error);

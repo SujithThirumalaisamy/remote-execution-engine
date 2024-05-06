@@ -32,7 +32,7 @@ model Submission {
   id                   String           @id @default(uuid())
   code                 String
   mainFuncName         String           @default("main")
-  stdin                String           @default("")
+  stdin                String[]         @default([""])
   stdout               String           @default("")
   codeLanguageId       Int
   codeLanguage         CodeLanguage     @relation(fields: [codeLanguageId], references: [id])
