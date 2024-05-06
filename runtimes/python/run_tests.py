@@ -1,5 +1,6 @@
 import sys
 import argparse
+import io
 
 parser = argparse.ArgumentParser()
 
@@ -7,8 +8,19 @@ class ExecutionEngine:
     @staticmethod
     def execute_function(func, *args):
         try:
+            # Redirect stdout to a buffer
+            stdout_buffer = io.StringIO()
+            sys.stdout = stdout_buffer
+            
             # Call the function with the provided arguments
-            output = func(*args)
+            func(*args)
+            
+            # Get the output from the buffer
+            output = stdout_buffer.getvalue()
+            
+            # Reset stdout
+            sys.stdout = sys.__stdout__
+            
             return output, None
         except Exception as e:
             return None, str(e)
@@ -17,7 +29,7 @@ class ExecutionEngine:
     def run_test_cases(func, test_cases):
         results = []
         for i, (input_data, expected_output) in enumerate(test_cases, 1):
-            output, error = ExecutionEngine.execute_function(func, *input_data)
+            output, error = func(*input_data), None
             if error:
                 results.append((f"Test case {i}: Failed - {error}", False))
             elif output == expected_output:
@@ -71,7 +83,7 @@ if args.std_in:
     output, _ = ExecutionEngine.execute_function(input_function, *input_data)
     try:
         with open(args.std_out, 'w') as file:
-            file.write(str(output) + '\n')
+            file.write(str(output))
     except Exception as e:
         print(f"Error writing output to file: {e}")
         sys.exit(1)
