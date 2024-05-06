@@ -5,8 +5,8 @@ if [ ! -d "workdir" ]; then
     mkdir -p workdir
 fi
 
-cp ./run_tests.py ./workdir/run_tests.py
-cp ./update_submission.py ./workdir/update_submission.py
+cp /python/run_tests.py ./workdir/run_tests.py
+cp /python/update_submission.py ./workdir/update_submission.py
 
 if [ -z "$CALLBACK_URL" ] || [ -z "$SUBMISSION_ID" ]; then
     echo "Error: CALLBACK_URL or SUBMISSION_ID not provided."
