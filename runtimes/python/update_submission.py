@@ -3,8 +3,11 @@ import requests
 
 def submit_patch_request(api_url, testcases_file, stdout_file):
     # Read the content of testcases.txt
-    with open(testcases_file, 'r') as f:
-        testcases_content = f.read()
+    if os.path.exists(testcases_file):
+        with open(testcases_file, 'r') as f:
+            testcases_content = f.read()
+    else:
+        testcases_content = ""
 
     # Read the content of stdout.txt
     with open(stdout_file, 'r') as f:
