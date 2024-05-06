@@ -49,12 +49,16 @@ app.post("/submission", async (req: Request, res: Response) => {
 app.patch("/submission/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { submission } = req.body;
+    const { testCasesPassed, stdOut, status } = req.body;
+    if (status) {
+      redisClient.LPUSH("deployments_to_be_deleted", id);
+    }
     const updatedSubmission = await db.submission.update({
       where: { id },
       data: {
         // Assuming submission object contains fields to be updated
-        ...submission,
+        stdout: stdOut,
+        status,
       },
     });
     res.json(updatedSubmission);
