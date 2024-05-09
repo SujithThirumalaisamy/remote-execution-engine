@@ -5,8 +5,8 @@ if [ ! -d "workdir" ]; then
     mkdir -p workdir
 fi
 
-cp /python/run_tests.py ./workdir/run_tests.py
-cp /python/update_submission.py ./workdir/update_submission.py
+cp /cpp/main_function_executor ./workdir/main_function_executor
+cp /cpp/update_submission ./workdir/update_submission
 
 if [ -z "$CALLBACK_URL" ] || [ -z "$SUBMISSION_ID" ]; then
     echo "Error: CALLBACK_URL or SUBMISSION_ID not provided."
@@ -23,9 +23,8 @@ if [ $? -ne 0 ]; then
 fi
 
 main_func=$(echo "$response" | jq -r '.code')
-echo "$main_func" > workdir/main_func.py
+echo "$main_func" > workdir/main_function.cpp
 
-# Parse the response
 std_in=$(echo "$response" | jq -r '.stdin')
 
 if [ "$std_in" != "null" ]; then
@@ -33,10 +32,9 @@ if [ "$std_in" != "null" ]; then
     for row in $(echo "${std_in}"); do
         formatted_std_in+=$(echo "${row}")
     done
-    cd workdir
-    echo "$formatted_std_in" > std_in.txt
-    python run_tests.py -f main_func.main_function -o std_out.txt -i std_in.txt
-    python update_submission.py
+    echo "$formatted_std_in" > workdir/std_in.txt
+    ./workdir/main_function_executor workdir/main_function.cpp workdir/std_in.txt > workdir/std_out.txt
+    ./workdir/update_submission
     exit
 else
     test_cases=$(echo "$response" | jq -r '.testCases')
@@ -48,9 +46,8 @@ else
         formatted_test_cases+="((${input},), ${expected_output})"","
     done
     formatted_test_cases+="]"
-    cd workdir
-    echo "$formatted_test_cases" > test_cases.txt
-    python run_tests.py -f main_func.main_function -o std_out.txt -t test_cases.txt
-    python update_submission.py
+    echo "$formatted_test_cases" > workdir/test_cases.txt
+    ./workdir/main_function_executor workdir/main_function.cpp workdir/test_cases.txt > workdir/std_out.txt
+    ./workdir/update_submission
     exit
 fi
