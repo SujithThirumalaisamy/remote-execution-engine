@@ -16,6 +16,7 @@ datasource db {
 model CodeLanguage {
   id               Int          @id
   name             String
+  extension        String
   Submission       Submission[]
   compileCommand   String       @default("")
   executionCommand String       @default("")

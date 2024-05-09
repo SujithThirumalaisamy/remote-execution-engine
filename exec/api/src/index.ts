@@ -25,7 +25,6 @@ app.get("/submission/:id", async (req: Request, res: Response) => {
     }
     res.json(submission);
   } catch (error) {
-    console.error("Error fetching submissions:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -64,7 +63,6 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
     const updatedSubmission = await db.submission.update({
       where: { id },
       data: {
-        // Assuming submission object contains fields to be updated
         stdout: stdOut,
         status,
       },
