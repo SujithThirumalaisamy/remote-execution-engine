@@ -12,9 +12,9 @@ function runTestCases() {
       }
     });
   } catch (error) {
-    return { status: "Error", stdOut: JSON.stringify(error) };
+    return { status: "Error", stdOut: error };
   }
-  return { status: "Successful", testCasesPassed: JSON.stringify(result) };
+  return { status: "Successful", testCasesPassed: result };
 }
 async function updateSubmission(result) {
   const respose = await fetch(

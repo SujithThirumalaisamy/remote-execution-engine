@@ -1,7 +1,9 @@
 #!/bin/bash
 
-cd /usr/share
-git clone $TESTCASES_GIT
+cd /usr/share/testcases-ee
+git init
+git remote add origin $TESTCASES_GIT
+git pull origin main
 
 cd /javascript
 cp /usr/share/testcases-ee/testcases/$PROBLEM_ID.json ./test_cases.json
