@@ -5,6 +5,7 @@ CREATE TYPE "SubmissionStatus" AS ENUM ('Queued', 'Successful', 'Error');
 CREATE TABLE "CodeLanguage" (
     "id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
+    "extension" TEXT NOT NULL,
     "compileCommand" TEXT NOT NULL DEFAULT '',
     "executionCommand" TEXT NOT NULL DEFAULT '',
     "testCommand" TEXT NOT NULL DEFAULT '',

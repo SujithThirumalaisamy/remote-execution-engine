@@ -7,25 +7,22 @@ const k8sApi = kc.makeApiClient(AppsV1Api);
 const redis = createClient();
 
 function delete_deployment(deploymentName: string) {
-  k8sApi
-    .deleteNamespacedDeployment(deploymentName, "isolated-execution-env")
-    .then(() => {
-      console.log(`Deployment ${deploymentName} deleted successfully`);
-    })
-    .catch((err: Error) => {
-      console.error(`Error deleting deployment ${deploymentName}: ${err}`);
-    });
+  k8sApi.deleteNamespacedDeployment(deploymentName, "isolated-execution-env");
 }
+var timeout = setTimeout(main, 1000);
 async function main() {
-  await redis.connect();
-  setInterval(async () => {
+  try {
     const deploymentName: string =
       (await redis.RPOP("deployments_to_be_deleted")) || "";
-    if (deploymentName.length === 0) {
-      //How to make this wait for few seconds if there is no Deployments
-    } else {
-      delete_deployment(deploymentName);
-    }
-  }, 1000);
+    if (deploymentName === "") throw new Error("No Deployment");
+    delete_deployment(deploymentName);
+  } catch (error) {
+    // clearTimeout(timeout);
+    // timeout = setTimeout(main, 1000);
+  } finally {
+    clearTimeout(timeout);
+    timeout = setTimeout(main, 1000);
+  }
 }
+redis.connect();
 main();

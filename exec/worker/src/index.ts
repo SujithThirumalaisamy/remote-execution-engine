@@ -9,6 +9,7 @@ import {
 import db from "../../../db/src";
 import fs from "fs";
 import path from "path";
+import { time } from "console";
 require("dotenv").config();
 const redisClient = createClient();
 redisClient.connect();
@@ -26,50 +27,53 @@ const isolatedExecutionNamespace = {
 
 async function createNamespaceIfNotExists() {
   try {
-    coreK8sApi.createNamespace(isolatedExecutionNamespace);
-  } catch (error) {
-    console.log("Namespace already exists.");
-  }
+    await coreK8sApi.createNamespace(isolatedExecutionNamespace);
+  } catch (error) {}
 }
 
 async function orchestrateExecution() {
-  try {
-    const submission_id: string | null = await redisClient.RPOP(
-      "submission_ids"
-    );
-    const CALLBACK_URL: string = process.env.CALLBACK_URL || "";
-    if (submission_id === null) {
-      throw Error("No Submissions in Queue currently");
-    }
-    //This should be added after the orchestration logic
-    const submission = await db.submission.findFirst({
-      where: { id: submission_id },
-      include: { codeLanguage: true },
+  const submission_id: string | null = await redisClient.RPOP("submission_ids");
+  const CALLBACK_URL: string = process.env.CALLBACK_URL || "";
+  if (submission_id === null) {
+    throw Error("No Submissions in Queue currently");
+  }
+  //This should be added after the orchestration logic
+  const submission = await db.submission.findFirst({
+    where: { id: submission_id },
+    include: { codeLanguage: true },
+  });
+  const input = fs.readFileSync(
+    path.join(
+      __dirname,
+      `../runtimes/deploy_${submission?.codeLanguage.name}.yaml`
+    ),
+    { encoding: "utf8" }
+  );
+  const importedYamlString = input
+    .replaceAll("submission-id", submission_id)
+    .replaceAll("callback-url", CALLBACK_URL);
+  const deploymentYaml: V1Deployment = loadYaml(importedYamlString);
+  const newDeployment = await appsK8sApi
+    .createNamespacedDeployment("isolated-execution-env", deploymentYaml)
+    .catch(async (e) => {
+      await redisClient.RPUSH("submission_ids", submission_id);
     });
-    const input = fs.readFileSync(
-      path.join(
-        __dirname,
-        `../runtimes/deploy_${submission?.codeLanguage.name}.yaml`
-      ),
-      { encoding: "utf8" }
-    );
-    const importedYamlString = input
-      .replaceAll("submission-id", submission_id)
-      .replaceAll("callback-url", CALLBACK_URL);
-    const deploymentYaml: V1Deployment = loadYaml(importedYamlString);
-    const newDeployment = await appsK8sApi
-      .createNamespacedDeployment("isolated-execution-env", deploymentYaml)
-      .catch(async (e) => {
-        await redisClient.RPUSH("submission_ids", submission_id);
-      });
-    await db.submission.update({
-      where: { id: submission_id },
-      data: { executionContainerId: submission_id },
-    });
-  } catch (error) {}
+  await db.submission.update({
+    where: { id: submission_id },
+    data: { executionContainerId: submission_id },
+  });
 }
+var timeout = setTimeout(() => main(), 1000);
 async function main() {
-  await createNamespaceIfNotExists();
-  await orchestrateExecution();
+  try {
+    await orchestrateExecution();
+  } catch {
+    // clearTimeout(timeout);
+    // timeout = setTimeout(() => main(), 1000);
+  } finally {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => main(), 1000);
+  }
 }
-setInterval(main, 1000);
+main();
+createNamespaceIfNotExists();

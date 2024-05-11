@@ -44,6 +44,7 @@ app.post("/submission", async (req: Request, res: Response) => {
         testCases: true,
       },
     });
+    console.log("Created Submission");
     redisClient.LPUSH("submission_ids", createdSubmission.id.toString());
     res.json(createdSubmission);
   } catch (error) {
