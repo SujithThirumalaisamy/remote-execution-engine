@@ -17,8 +17,6 @@ async function main() {
     if (deploymentName === "") throw new Error("No Deployment");
     delete_deployment(deploymentName);
   } catch (error) {
-    // clearTimeout(timeout);
-    // timeout = setTimeout(main, 1000);
   } finally {
     clearTimeout(timeout);
     timeout = setTimeout(main, 1000);

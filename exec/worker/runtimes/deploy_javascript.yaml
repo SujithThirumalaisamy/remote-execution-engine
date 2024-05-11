@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: submission-id
-          image: sujiththirumalaisamy/exec-py:latest
+          image: sujiththirumalaisamy/exec-js:latest
           resources:
             limits:
               cpu: "0.5"

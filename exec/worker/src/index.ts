@@ -9,7 +9,6 @@ import {
 import db from "../../../db/src";
 import fs from "fs";
 import path from "path";
-import { time } from "console";
 require("dotenv").config();
 const redisClient = createClient();
 redisClient.connect();
@@ -34,6 +33,7 @@ async function createNamespaceIfNotExists() {
 async function orchestrateExecution() {
   const submission_id: string | null = await redisClient.RPOP("submission_ids");
   const CALLBACK_URL: string = process.env.CALLBACK_URL || "";
+  const TESTCASES_GIT: string = process.env.TESTCASES_GIT || "";
   if (submission_id === null) {
     throw Error("No Submissions in Queue currently");
   }
@@ -49,11 +49,14 @@ async function orchestrateExecution() {
     ),
     { encoding: "utf8" }
   );
+  if (!submission) return;
   const importedYamlString = input
     .replaceAll("submission-id", submission_id)
-    .replaceAll("callback-url", CALLBACK_URL);
+    .replaceAll("callback-url", CALLBACK_URL)
+    .replaceAll("testcases-git", TESTCASES_GIT)
+    .replaceAll("problem-id", submission.problemId);
   const deploymentYaml: V1Deployment = loadYaml(importedYamlString);
-  const newDeployment = await appsK8sApi
+  await appsK8sApi
     .createNamespacedDeployment("isolated-execution-env", deploymentYaml)
     .catch(async (e) => {
       await redisClient.RPUSH("submission_ids", submission_id);
@@ -67,9 +70,7 @@ var timeout = setTimeout(() => main(), 1000);
 async function main() {
   try {
     await orchestrateExecution();
-  } catch {
-    // clearTimeout(timeout);
-    // timeout = setTimeout(() => main(), 1000);
+  } catch (error) {
   } finally {
     clearTimeout(timeout);
     timeout = setTimeout(() => main(), 1000);

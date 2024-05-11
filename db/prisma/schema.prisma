@@ -31,6 +31,7 @@ enum SubmissionStatus {
 
 model Submission {
   id                   String           @id @default(uuid())
+  problemId            String
   code                 String
   mainFuncName         String           @default("main")
   stdin                String[]         @default([""])
@@ -39,17 +40,9 @@ model Submission {
   codeLanguage         CodeLanguage     @relation(fields: [codeLanguageId], references: [id])
   executionContainerId String           @default("")
   status               SubmissionStatus @default(Queued)
+  testCasesPassed      String[]
   runtime              Float?
   memoryUsage          Float?
   errorMessage         String?
   createdAt            DateTime         @default(now())
-  testCases            TestCase[]
-}
-
-model TestCase {
-  id             String      @id @default(uuid())
-  expectedOutput String
-  inputs         String[]
-  submission     Submission? @relation(fields: [submissionId], references: [id])
-  submissionId   String?
 }
