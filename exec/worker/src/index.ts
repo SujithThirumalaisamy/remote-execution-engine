@@ -31,9 +31,13 @@ async function createNamespaceIfNotExists() {
 }
 
 async function orchestrateExecution() {
-  const submission_id: string | null = await redisClient.RPOP("submission_ids");
   const CALLBACK_URL: string = process.env.CALLBACK_URL || "";
   const TESTCASES_GIT: string = process.env.TESTCASES_GIT || "";
+  const CONTAINER_REG_BASE_URL = process.env.CONTAINER_REG_BASE_URL;
+  const IMAGE_BASE_NAME = process.env.IMAGE_BASE_NAME;
+  const IMAGE_TAG = process.env.IMAGE_TAG;
+
+  const submission_id: string | null = await redisClient.RPOP("submission_ids");
   if (submission_id === null) {
     throw Error("No Submissions in Queue currently");
   }
@@ -43,18 +47,17 @@ async function orchestrateExecution() {
     include: { language: true },
   });
   const input = fs.readFileSync(
-    path.join(
-      __dirname,
-      `../runtimes/deploy_${submission?.language.name}.yaml`
-    ),
+    path.join(__dirname, `../runtimes/deploy_execution.yaml`),
     { encoding: "utf8" }
   );
   if (!submission) return;
+  const LANGUAGE_IMAGE_NAME = `${CONTAINER_REG_BASE_URL}/${IMAGE_BASE_NAME}-${submission?.language.extension}:${IMAGE_TAG}`;
   const importedYamlString = input
     .replaceAll("submission-id", submission_id)
     .replaceAll("callback-url", CALLBACK_URL)
     .replaceAll("testcases-git", TESTCASES_GIT)
-    .replaceAll("problem-id", submission.problemId);
+    .replaceAll("problem-id", submission.problemId)
+    .replaceAll("language-image", LANGUAGE_IMAGE_NAME);
   const deploymentYaml: V1Deployment = loadYaml(importedYamlString);
   await appsK8sApi
     .createNamespacedDeployment("isolated-execution-env", deploymentYaml)

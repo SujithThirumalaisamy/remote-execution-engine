@@ -4,7 +4,7 @@ git clone $TESTCASES_GIT
 
 cd /testcases-ee/testcases
 
-echo $TESTCASES > $PROBLEM_ID.json 
+echo $TESTCASES > $PROBLEM_ID.json
 
 cd ..
 
