@@ -40,12 +40,12 @@ async function orchestrateExecution() {
   //This should be added after the orchestration logic
   const submission = await db.submission.findFirst({
     where: { id: submission_id },
-    include: { codeLanguage: true },
+    include: { language: true },
   });
   const input = fs.readFileSync(
     path.join(
       __dirname,
-      `../runtimes/deploy_${submission?.codeLanguage.name}.yaml`
+      `../runtimes/deploy_${submission?.language.name}.yaml`
     ),
     { encoding: "utf8" }
   );

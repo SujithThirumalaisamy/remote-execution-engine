@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Github Testcase Deployer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Github Testcase Deployer
+  template:
+    metadata:
+      labels:
+        app: Github Testcase Deployer
+    spec:
+      containers:
+        - name: Github Testcase Deployer
+          image: sujiththirumalaisamy/gh-testcase-deployer:latest
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "256Mi"
+            requests:
+              cpu: "0.25"
+              memory: "128Mi"
+          env:
+            - name: TESTCASES_GIT
+              value: testcases-git
+            - name: PROBLEM_ID
+              value: problem-id
+            - name: TESTCASES
+              value: test-cases

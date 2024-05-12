@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model CodeLanguage {
+model Language {
   id               Int          @id
   name             String
   extension        String
@@ -32,12 +32,12 @@ enum SubmissionStatus {
 model Submission {
   id                   String           @id @default(uuid())
   problemId            String
-  code                 String
+  source_code          String
   mainFuncName         String           @default("main")
   stdin                String[]         @default([""])
   stdout               String           @default("")
-  codeLanguageId       Int
-  codeLanguage         CodeLanguage     @relation(fields: [codeLanguageId], references: [id])
+  language_id          Int
+  language             Language         @relation(fields: [language_id], references: [id])
   executionContainerId String           @default("")
   status               SubmissionStatus @default(Queued)
   testCasesPassed      String[]

@@ -7,7 +7,7 @@ git pull origin main
 cp /javascript/testcases-ee/testcases/$PROBLEM_ID.json ./test_cases.json
 
 response=$(curl -s "$CALLBACK_URL/submission/$SUBMISSION_ID")
-main_func=$(echo "$response" | jq -r '.code')
+main_func=$(echo "$response" | jq -r '.source_code')
 
 echo "$main_func" > ./main_func.js
 
