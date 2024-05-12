@@ -1,10 +1,9 @@
 import { createClient } from "redis";
 import {
   KubeConfig,
-  AppsV1Api,
   CoreV1Api,
   loadYaml,
-  V1Deployment,
+  V1Pod,
 } from "@kubernetes/client-node";
 import db from "../../../db/src";
 import fs from "fs";
@@ -17,7 +16,6 @@ const k8s = new KubeConfig();
 k8s.loadFromDefault();
 
 const coreK8sApi = k8s.makeApiClient(CoreV1Api);
-const appsK8sApi = k8s.makeApiClient(AppsV1Api);
 const isolatedExecutionNamespace = {
   metadata: {
     name: "isolated-execution-env",
@@ -58,9 +56,9 @@ async function orchestrateExecution() {
     .replaceAll("testcases-git", TESTCASES_GIT)
     .replaceAll("problem-id", submission.problemId)
     .replaceAll("language-image", LANGUAGE_IMAGE_NAME);
-  const deploymentYaml: V1Deployment = loadYaml(importedYamlString);
-  await appsK8sApi
-    .createNamespacedDeployment("isolated-execution-env", deploymentYaml)
+  const deploymentYaml: V1Pod = loadYaml(importedYamlString);
+  await coreK8sApi
+    .createNamespacedPod("isolated-execution-env", deploymentYaml)
     .catch(async (e) => {
       await redisClient.RPUSH("submission_ids", submission_id);
     });

@@ -1,17 +1,17 @@
-import { KubeConfig, AppsV1Api } from "@kubernetes/client-node";
+import { KubeConfig, AppsV1Api, CoreV1Api } from "@kubernetes/client-node";
 import { createClient } from "redis";
 
 const kc = new KubeConfig();
 kc.loadFromDefault();
 
-const k8sApi = kc.makeApiClient(AppsV1Api);
+const k8sApi = kc.makeApiClient(CoreV1Api);
 const redis = createClient();
 const namespace = "isolated-execution-env";
 var timeout = setTimeout(main, 1000);
 
-function delete_deployment(deploymentName: string) {
+async function delete_pod(podName: string) {
   try {
-    k8sApi.deleteNamespacedDeployment(deploymentName, namespace);
+    await k8sApi.deleteNamespacedPod(podName, namespace);
   } catch (error) {
     console.log("Internal Error! Unable to find Deployment.");
   }
@@ -19,10 +19,10 @@ function delete_deployment(deploymentName: string) {
 
 async function main() {
   try {
-    const deploymentName: string =
+    const podName: string =
       (await redis.RPOP("deployments_to_be_deleted")) || "";
-    if (deploymentName === "") return;
-    delete_deployment(deploymentName);
+    if (podName === "") return;
+    delete_pod(podName);
   } catch (error) {
     console.log("Internal Error! Unable to delete the Deployment.");
   } finally {
