@@ -67,6 +67,7 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
         status,
       },
     });
+    console.log(updatedSubmission);
     res.json(updatedSubmission);
   } catch (error) {
     console.error("Error updating submission:", error);

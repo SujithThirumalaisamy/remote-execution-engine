@@ -24,6 +24,7 @@ CREATE TABLE "Submission" (
     "codeLanguageId" INTEGER NOT NULL,
     "executionContainerId" TEXT NOT NULL DEFAULT '',
     "status" "SubmissionStatus" NOT NULL DEFAULT 'Queued',
+    "testCasesPassed" TEXT[],
     "runtime" DOUBLE PRECISION,
     "memoryUsage" DOUBLE PRECISION,
     "errorMessage" TEXT,

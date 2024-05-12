@@ -32,10 +32,3 @@ spec:
               value: testcases-git
             - name: PROBLEM_ID
               value: problem-id
-          volumeMounts:
-            - name: local
-              mountPath: /usr/share/data
-      volumes:
-        - name: local
-          hostname:
-            path: /var/execution-engine-data

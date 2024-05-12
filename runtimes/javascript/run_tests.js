@@ -27,7 +27,6 @@ async function updateSubmission(result) {
       },
     }
   );
-  console.log(respose);
 }
 const result = runTestCases();
 updateSubmission(result);
