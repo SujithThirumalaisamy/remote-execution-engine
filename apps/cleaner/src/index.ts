@@ -5,7 +5,7 @@ const kc = new KubeConfig();
 kc.loadFromDefault();
 
 const k8sApi = kc.makeApiClient(CoreV1Api);
-const redis = createClient();
+const redis = createClient({ url: process.env.REDIS_URL });
 const namespace = "isolated-execution-env";
 var timeout = setTimeout(main, 1000);
 

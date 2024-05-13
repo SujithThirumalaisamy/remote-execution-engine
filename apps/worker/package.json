@@ -13,6 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/typescript-config": "*"
+    "@repo/db": "*",
+    "redis": "^4.6.13",
+    "@types/redis": "^4.0.11",
+    "@repo/typescript-config": "*",
+    "@kubernetes/client-node": "^0.21.0",
+    "dotenv": "^16.4.5"
   }
 }

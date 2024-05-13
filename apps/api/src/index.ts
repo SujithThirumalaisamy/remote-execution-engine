@@ -3,7 +3,9 @@ import db from "@repo/db";
 import { createClient } from "redis";
 import { SubmissionStatus } from "@prisma/client";
 require("dotenv").config();
-const redisClient = createClient();
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+});
 
 const app = express();
 

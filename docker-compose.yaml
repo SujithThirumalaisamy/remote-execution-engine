@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      - API_URL=api:3000
+    networks:
+      - app_network
+
+  cleaner:
+    container_name: cleaner
+    build:
+      context: .
+      dockerfile: ./apps/cleaner/Dockerfile
+    restart: always
+    environment:
+      - KUBECONFIG=/kube/config
+    networks:
+      - app_network
+
+  worker:
+    container_name: worker
+    build:
+      context: .
+      dockerfile: ./apps/worker/Dockerfile
+    restart: always
+    environment:
+      - CALLBACK_URL=api:3000
+      - TESTCASES_GIT=https://github.com/SujithThirumalaisamy/testcases-ee.git
+      - CONTAINER_REG_BASE_URL=sujiththirumalaisamy
+      - IMAGE_BASE_NAME=exec
+      - IMAGE_TAG=latest
+      - KUBECONFIG=/kube/config
+    networks:
+      - app_network
+    volumes:
+      - ~/.kube/config:/kube/config
+
+networks:
+  app_network:
+    external: true

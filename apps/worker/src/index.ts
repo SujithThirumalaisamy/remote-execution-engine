@@ -9,7 +9,7 @@ import db from "@repo/db";
 import fs from "fs";
 import path from "path";
 require("dotenv").config();
-const redisClient = createClient();
+const redisClient = createClient({ url: process.env.REDIS_URL });
 redisClient.connect();
 
 const k8s = new KubeConfig();
