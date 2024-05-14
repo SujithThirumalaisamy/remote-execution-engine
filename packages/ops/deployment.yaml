@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-depl
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-depl
+spec:
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: sujiththirumalaisamy/exec-api:latest
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: execution-engine-env
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-depl
+spec:
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: sujiththirumalaisamy/exec-worker:latest
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+          envFrom:
+            - configMapRef:
+                name: execution-engine-env
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cleaner-depl
+spec:
+  selector:
+    matchLabels:
+      app: cleaner
+  template:
+    metadata:
+      labels:
+        app: cleaner
+    spec:
+      containers:
+        - name: cleaner
+          image: sujiththirumalaisamy/exec-cleaner:latest
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "0.5"
+          envFrom:
+            - configMapRef:
+                name: execution-engine-env

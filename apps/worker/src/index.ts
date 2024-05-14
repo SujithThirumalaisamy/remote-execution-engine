@@ -9,6 +9,7 @@ import db from "@repo/db";
 import fs from "fs";
 import path from "path";
 require("dotenv").config();
+
 const redisClient = createClient({ url: process.env.REDIS_URL });
 redisClient.connect();
 
@@ -29,7 +30,7 @@ async function createNamespaceIfNotExists() {
 }
 
 async function orchestrateExecution() {
-  const CALLBACK_URL: string = process.env.CALLBACK_URL || "";
+  const CALLBACK_URL: string = process.env.API_URL || "";
   const TESTCASES_GIT: string = process.env.TESTCASES_GIT || "";
   const CONTAINER_REG_BASE_URL = process.env.CONTAINER_REG_BASE_URL;
   const IMAGE_BASE_NAME = process.env.IMAGE_BASE_NAME;
@@ -52,8 +53,8 @@ async function orchestrateExecution() {
   const LANGUAGE_IMAGE_NAME = `${CONTAINER_REG_BASE_URL}/${IMAGE_BASE_NAME}-${submission?.language.extension}:${IMAGE_TAG}`;
   const importedYamlString = input
     .replaceAll("submission-id", submission_id)
-    .replaceAll("callback-url", CALLBACK_URL)
-    .replaceAll("testcases-git", TESTCASES_GIT)
+    .replaceAll("callback-url", CALLBACK_URL || "")
+    .replaceAll("testcases-git", TESTCASES_GIT || "")
     .replaceAll("problem-id", submission.problemId)
     .replaceAll("language-image", LANGUAGE_IMAGE_NAME);
   const deploymentYaml: V1Pod = loadYaml(importedYamlString);
