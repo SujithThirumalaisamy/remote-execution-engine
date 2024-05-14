@@ -1,5 +1,6 @@
 import { KubeConfig, CoreV1Api } from "@kubernetes/client-node";
 import { createClient } from "redis";
+require("dotenv").config();
 
 const kc = new KubeConfig();
 kc.loadFromDefault();

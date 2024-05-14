@@ -4,20 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -b",
-    "start": "tsc -b && node ./dist/index.js",
+    "build": "esbuild ./src/index.ts --bundle --platform=node --outfile=dist/index.js --sourcemap",
+    "start": "esbuild ./src/index.ts --bundle --platform=node --outfile=dist/index.js --sourcemap && nodemon dist/index.js",
     "dev": "nodemon ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "@types/redis": "^4.0.11"
+  },
   "dependencies": {
-    "@repo/db": "*",
-    "redis": "^4.6.13",
-    "@types/redis": "^4.0.11",
-    "@repo/typescript-config": "*",
     "@kubernetes/client-node": "^0.21.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "redis": "^4.6.13"
   }
 }
