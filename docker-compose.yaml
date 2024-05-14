@@ -10,7 +10,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - API_URL=api:3000
+      # - API_URL=http://192.168.1.100:3000
       - REDIS_URL=redis://192.168.1.100:6379
     networks:
       - app_network
@@ -35,7 +35,7 @@ services:
       dockerfile: ./apps/worker/Dockerfile
     restart: always
     environment:
-      - CALLBACK_URL=api:3000
+      - CALLBACK_URL=http://192.168.1.100:3000
       - TESTCASES_GIT=https://github.com/SujithThirumalaisamy/testcases-ee.git
       - CONTAINER_REG_BASE_URL=sujiththirumalaisamy
       - IMAGE_BASE_NAME=exec

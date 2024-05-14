@@ -28,6 +28,10 @@ RUN npx turbo build --filter=cleaner...
 FROM base AS runner
 WORKDIR /app
 
+RUN addgroup --system --gid 1001 expressjs
+RUN adduser --system --uid 1001 expressjs
+USER expressjs
+
 COPY --from=installer /app .
 
 CMD node apps/cleaner/dist/index.js

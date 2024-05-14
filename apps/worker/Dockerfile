@@ -28,6 +28,7 @@ WORKDIR /app/packages/db
 RUN npx prisma migrate dev
 WORKDIR /app
 RUN npm install
+RUN cp /app/node_modules/@prisma/engines/libquery_engine-linux-musl-openssl-3.0.x.so.node /app/node_modules/@prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
 
 RUN npx turbo build --filter=worker...
 
@@ -37,6 +38,8 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 expressjs
 RUN adduser --system --uid 1001 expressjs
 USER expressjs
+
 COPY --from=installer /app .
+# RUN cp /app/node_modules/@prisma/engines/query_engine-windows.dll.node /app/node_modules/@prisma/client/query_engine-windows.dll.node
 
 CMD node apps/worker/dist/index.js

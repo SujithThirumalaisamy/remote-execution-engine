@@ -15,7 +15,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "redis": "^4.6.13"
+    "redis": "^4.6.13",
+    "@repo/db": "*"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

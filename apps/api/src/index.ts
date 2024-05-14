@@ -82,5 +82,5 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   await redisClient.connect();
-  redisClient.set("API_URL", process.env.API_URL || "");
+  // redisClient.set("API_URL", process.env.API_URL || "");
 });
