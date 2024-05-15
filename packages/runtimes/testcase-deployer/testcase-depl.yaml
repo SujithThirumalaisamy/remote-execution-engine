@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testcases-deployer
+  labels:
+    app: testcases-deployer
+spec:
+  containers:
+    - name: testcases-deployer
+      image: sujiththirumalaisamy/exec-testcase-deployer:latest
+      resources:
+        limits:
+          memory: "512Mi"
+          cpu: "0.5"
+      envFrom:
+        - configMapRef:
+            name: testcases-deployer-env
+      volumeMounts:
+        - name: testcases-volume
+          mountPath: /etc
+  volumes:
+    - name: testcases-volume
+      hostPath:
+        path: /mnt/c/Users/sujit/testcases-ee/testcases
+        type: Directory

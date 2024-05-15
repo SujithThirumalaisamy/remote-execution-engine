@@ -1,12 +1,17 @@
 cd /github
 
-git clone $TESTCASES_GIT
+git config --global http.sslVerify false
 
-cd /testcases-ee/testcases
+git clone https://$TOKEN@github.com/$TESTCASES_GIT
 
-echo $TESTCASES > $PROBLEM_ID.json
+cd testcases-ee/testcases
+
+cp /etc/$PROBLEM_ID.json ./$PROBLEM_ID.json
 
 cd ..
+
+git config --global user.email $GLOBAL_EMAIL
+git config --global user.name $GLOBAL_NAME
 
 git add .
 

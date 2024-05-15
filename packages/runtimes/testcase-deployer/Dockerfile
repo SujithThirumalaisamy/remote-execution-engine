@@ -1,6 +1,11 @@
-FROM alpine:latest
+FROM ubuntu:latest
 
-RUN apk add git
+RUN apt-get update && apt-get install -y apt-transport-https
+
+RUN apt-get install git -y
+
+RUN apt-get update
+
 COPY ./entry-point.sh ~/entry-point.sh
 
-ENTRYPOINT [ "~/entry-point.sh" ]
+CMD [ "/bin/bash", "~/entry-point.sh" ]
