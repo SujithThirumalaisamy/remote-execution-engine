@@ -1,1 +1,1 @@
-![daily-code drawio](https://github.com/SujithThirumalaisamy/remote-execution-engine/assets/108384868/22702522-808c-49c7-884d-f3863c091aa7)
+![daily-code drawio (1)](https://github.com/SujithThirumalaisamy/remote-execution-engine/assets/108384868/32aabe0d-ed99-4ced-81ff-5db5180edafa)
