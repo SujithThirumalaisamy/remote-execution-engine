@@ -5,9 +5,12 @@ metadata:
 data:
   PORT: "3000"
   API_URL: api:3000
-  TESTCASES_GIT: https://github.com/SujithThirumalaisamy/testcases-ee.git
   CONTAINER_REG_BASE_URL: sujiththirumalaisamy
   IMAGE_BASE_NAME: exec
   IMAGE_TAG: latest
   DATABASE_URL: postgresql://postgres:sujith2023@192.168.1.100:5432/remote-execution-engine?schema=public
   REDIS_URL: redis://192.168.1.100:6379
+  TOKEN: ""
+  REPO_OWNER: SujithThirumalaisamy
+  REPO: testcases-ee
+  TESTCASES_GIT: https://github.com/SujithThirumalaisamy/testcases-ee.git
