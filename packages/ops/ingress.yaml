@@ -6,10 +6,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: api.internals
+    - host: example.domain.com
       http:
         paths:
-          - path: /webapp
+          - path: /
             pathType: Prefix
             backend:
               service:

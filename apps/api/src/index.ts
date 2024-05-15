@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import db from "@repo/db";
 import { createClient } from "redis";
 import { SubmissionStatus } from "@prisma/client";
+import fs from "fs";
+
 require("dotenv").config();
 const redisClient = createClient({
   url: process.env.REDIS_URL,
@@ -72,6 +74,22 @@ app.patch("/submission/:id", async (req: Request, res: Response) => {
       },
     });
     res.json(updatedSubmission);
+  } catch (error) {
+    console.error("Error updating submission:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.post("/testcase/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { testcase } = req.body;
+    fs.writeFileSync(`/shared/nfs/${id}.json`, testcase);
+    if (!id) return;
+    redisClient.LPUSH("testcases_to_be_created", id);
+    return res
+      .status(200)
+      .json({ message: "Auto Deployment for testcase Triggered!" });
   } catch (error) {
     console.error("Error updating submission:", error);
     res.status(500).json({ error: "Internal Server Error" });
