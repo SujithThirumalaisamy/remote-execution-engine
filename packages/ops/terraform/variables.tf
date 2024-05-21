@@ -10,7 +10,7 @@ variable "namespace" {
 variable "image_urls" {
   description = "List of Docker image URLs for the microservice containers"
   type        = list(string)
-  default     = ["docker.io/sujiththirumalaisamy/exec-api/latest", "docker.io/sujiththirumalaisamy/exec-cleaner/latest", "docker.io/sujiththirumalaisamy/exec-worker/latest"]
+  default     = ["sujiththirumalaisamy/exec-api", "sujiththirumalaisamy/exec-cleaner", "sujiththirumalaisamy/exec-worker"]
 }
 
 variable "replicas" {

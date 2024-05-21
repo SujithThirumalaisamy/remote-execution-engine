@@ -59,7 +59,6 @@ resource "kubernetes_deployment" "microservice" {
             }
           }
         }
-
       }
     }
   }
@@ -87,25 +86,25 @@ resource "kubernetes_service" "microservice" {
   }
 }
 
-resource "kubernetes_ingress" "microservice" {
-  for_each = toset(var.image_urls)
-
+resource "kubernetes_ingress_v1" "api_ingress" {
   metadata {
-    name      = "microservice-ingress-${basename(each.key)}"
+    name      = "api-ingress"
     namespace = var.namespace
-    annotations = {
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-    }
   }
 
   spec {
     rule {
       http {
         path {
-          path = "/${basename(each.key)}"
+          path      = "/"
+          path_type = "Prefix"
           backend {
-            service_name = kubernetes_service.microservice[each.key].metadata[0].name
-            service_port = 80
+            service {
+              name = "microservice-exec-api"
+              port {
+                number = 80
+              }
+            }
           }
         }
       }
