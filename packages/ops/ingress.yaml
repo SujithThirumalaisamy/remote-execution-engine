@@ -3,10 +3,10 @@ kind: Ingress
 metadata:
   name: api-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: example.domain.com
+    - host: exec.isujith.dev
       http:
         paths:
           - path: /

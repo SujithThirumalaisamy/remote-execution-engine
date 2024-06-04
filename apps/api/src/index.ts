@@ -2,11 +2,20 @@ import express, { Request, Response } from "express";
 import db from "@repo/db";
 import { createClient } from "redis";
 import { SubmissionStatus } from "@prisma/client";
-import { Octokit } from "octokit";
 
 require("dotenv").config();
+let redisPort;
+if (process.env.REDIS_PORT) {
+  redisPort = parseInt(process.env.REDIS_PORT);
+} else {
+  redisPort = 6379;
+}
 const redisClient = createClient({
-  url: process.env.REDIS_URL,
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: redisPort,
+  },
 });
 
 const app = express();
@@ -84,6 +93,7 @@ app.post("/testcase/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { testcase } = req.body;
+    const { Octokit } = await import("octokit");
     const octokit = new Octokit({
       auth: process.env.TOKEN,
     });

@@ -1,12 +1,25 @@
 import { KubeConfig, CoreV1Api } from "@kubernetes/client-node";
 import { createClient } from "redis";
-require("dotenv").config;
+require("dotenv").config();
 
 const kc = new KubeConfig();
 kc.loadFromDefault();
 
 const k8sApi = kc.makeApiClient(CoreV1Api);
-const redis = createClient({ url: process.env.REDIS_URL });
+let redisPort;
+if (process.env.REDIS_PORT) {
+  redisPort = parseInt(process.env.REDIS_PORT);
+} else {
+  redisPort = 6379;
+}
+
+const redis = createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: redisPort,
+  },
+});
 const namespace = "isolated-execution-env";
 var timeout = setTimeout(main, 1000);
 

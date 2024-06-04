@@ -10,7 +10,21 @@ import fs from "fs";
 import path from "path";
 require("dotenv").config();
 
-const redisClient = createClient({ url: process.env.REDIS_URL });
+let redisPort;
+if (process.env.REDIS_PORT) {
+  redisPort = parseInt(process.env.REDIS_PORT);
+} else {
+  redisPort = 6379;
+}
+
+const redisClient = createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: redisPort,
+  },
+});
+
 redisClient.connect();
 
 const k8s = new KubeConfig();
@@ -52,10 +66,10 @@ async function orchestrateExecution() {
   if (!submission) return;
   const LANGUAGE_IMAGE_NAME = `${CONTAINER_REG_BASE_URL}/${IMAGE_BASE_NAME}-${submission?.language.extension}:${IMAGE_TAG}`;
   const importedYamlString = input
-    .replaceAll("submission-id", submission_id)
+    .replaceAll("submission-id", submission_id.toString())
     .replaceAll("callback-url", CALLBACK_URL || "")
     .replaceAll("testcases-git", TESTCASES_GIT || "")
-    .replaceAll("problem-id", submission.problemId)
+    .replaceAll("problem-id", submission.problemId.toString())
     .replaceAll("language-image", LANGUAGE_IMAGE_NAME);
   const deploymentYaml: V1Pod = loadYaml(importedYamlString);
   await coreK8sApi
